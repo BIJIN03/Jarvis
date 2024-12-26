@@ -62,7 +62,7 @@ def processCommand(c):
     
 
 if __name__=="__main__":
-    speak("Initialising Jarvis...")
+    speak("Initialising Luna...")
     r = sr.Recognizer()
     while True:
         try:
@@ -71,9 +71,9 @@ if __name__=="__main__":
                 audio=r.listen(source,timeout=2,phrase_time_limit=1)
             word=r.recognize_google(audio)
             print(word)
-            if "jarvis" in word.lower():
+            if "luna" in word.lower():
                 speak("Yes,How can I help you?")
-                print("Jarvis Active.")
+                print("Luna Active.")
                 try:
                     with sr.Microphone() as source:
                         audio=r.listen(source)
@@ -81,7 +81,7 @@ if __name__=="__main__":
                     command=r.recognize_google(audio)
                     print(command)
                     if command.lower() == "exit" or command.lower()=="stop":
-                        speak("Jarvis shutting down")
+                        speak("Luna shutting down")
                         break
                     processCommand(command)
 
