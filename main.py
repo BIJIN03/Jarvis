@@ -45,8 +45,11 @@ def processCommand(c):
     
     elif c.lower().startswith("play"):
         song=c.lower().strip("play ")
-        speak(f"Playing {song}")
-        webbrowser.open(musics[song])
+        if song in musics:
+            speak(f"Playing {song}")
+            webbrowser.open(musics[song])
+        else:
+            speak("Sorry, song not found.")
     elif "news" in c.lower():
         res=requests.get(f"https://newsapi.org/v2/everything?q=tesla&from=2024-11-25&sortBy=publishedAt&apiKey={newsapi}")
 
