@@ -7,7 +7,6 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from gtts import gTTS
 from music import musics
-
 # import pyttsx3
 
 load_dotenv()
@@ -17,7 +16,7 @@ load_dotenv()
 newsapi=os.getenv("NEWS_API")
 geminiapi=os.getenv("GEMINI_API")
 
-def speak(mytext):
+def speak(mytext,news=False):
     
     # engine.say(text)
     # engine.runAndWait()
@@ -27,8 +26,8 @@ def speak(mytext):
     pygame.mixer.init()
     pygame.mixer.music.load("text.mp3")
     pygame.mixer.music.play()
-    # while pygame.mixer.music.get_busy():  
-    #     pygame.time.Clock().tick(10)
+    while pygame.mixer.music.get_busy() and news:  
+        pygame.time.Clock().tick(10)
 
 def aiprocess(command):
 
@@ -55,7 +54,9 @@ def processCommand(c):
             data=res.json()
             articles=data.get("articles",[])
             for article in articles:
-                speak(article["title"])
+                speak(article["title"],True)
+        else:
+            speak("Sorry, unable to fetch news now.")
     else:
         result=aiprocess(c)
         speak(result)
@@ -64,6 +65,7 @@ def processCommand(c):
 if __name__=="__main__":
     speak("Initialising Luna...")
     r = sr.Recognizer()
+    name="Luna"
     while True:
         try:
             with sr.Microphone() as source:
@@ -71,19 +73,23 @@ if __name__=="__main__":
                 audio=r.listen(source,timeout=2,phrase_time_limit=1)
             word=r.recognize_google(audio)
             print(word)
-            if "luna" in word.lower():
+            if name.lower() in word.lower():
                 speak("Yes,How can I help you?")
-                print("Luna Active.")
+                print(f"{name} Active.")
                 try:
                     with sr.Microphone() as source:
                         audio=r.listen(source)
                 
                     command=r.recognize_google(audio)
                     print(command)
-                    if command.lower() == "exit" or command.lower()=="stop":
+                    if "set your name" in command.lower():
+                        name=command.split(" ")[len(command.split(" "))-1]
+                        speak(f"Name set to {name}")
+                    elif command.lower() == "exit" or command.lower()=="stop":
                         speak("Luna shutting down")
                         break
-                    processCommand(command)
+                    else:
+                        processCommand(command)
 
                 except :
                     print("No command recieved.")
